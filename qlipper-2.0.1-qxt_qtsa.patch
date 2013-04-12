@@ -1,0 +1,122 @@
+--- CMakeLists.txt.orig	2013-04-06 12:32:13.615886419 +0400
++++ CMakeLists.txt	2013-04-06 14:09:58.823775472 +0400
+@@ -48,10 +48,13 @@
+ set(QLIPPER_VERSION 2.0.1)
+ 
+ option(ENABLE_NETWORK_CLIPBOARD_SHARING "Enables experimental network support for clipboard sharing" OFF)
++option(USE_SYSTEM_QXT "Use system version Qxt Library for global shortcuts" ON)
++option(USE_SYSTEM_QTSA "Use system version QtSingleApplicatio" ON)
+ 
+ 
+ find_package(Qt4 REQUIRED QtCore QtGui QtNetwork)
+ include(${QT_USE_FILE})
++LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+ 
+ 
+ set(EXE_NAME "qlipper")
+@@ -68,9 +71,9 @@
+ 
+ 
+ # source code and compilation
+-set (QLIPPER_SOURCES 
+-    qtsingleapplication/qtsingleapplication.cpp
+-    qtsingleapplication/qtlocalpeer.cpp
++set (QLIPPER_SOURCES
++    #qtsingleapplication/qtsingleapplication.cpp
++    #qtsingleapplication/qtlocalpeer.cpp
+     qkeysequencewidget/qkeysequencewidget.cpp
+     qmenuview/qmenuview.cpp
+     src/main.cpp
+@@ -97,24 +100,28 @@
+     FIND_PACKAGE(X11 REQUIRED)
+     MESSAGE(STATUS "X11_X11_LIB: ${X11_X11_LIB}")
+ 
+-    set (QLIPPER_SOURCES ${QLIPPER_SOURCES} qxt/qxtglobalshortcut_x11.cpp)
++    #set (QLIPPER_SOURCES ${QLIPPER_SOURCES} qxt/qxtglobalshortcut_x11.cpp)
+     message(STATUS "Global shortcut for X11")
+ else ()
+     set (HAVE_QXT 0)
+     message (WARNING "Support for global keyboard shortcut is disabled")
+ endif ()
+ 
+-if (HAVE_QXT)
+-    set (QLIPPER_SOURCES ${QLIPPER_SOURCES}
+-            qxt/qxtglobal.cpp
+-            qxt/qxtglobalshortcut.cpp
+-        )
+-endif (HAVE_QXT)
++#if (HAVE_QXT)
++#    set (QLIPPER_SOURCES ${QLIPPER_SOURCES}
++#            qxt/qxtglobal.cpp
++#            qxt/qxtglobalshortcut.cpp
++#        )
++#endif (HAVE_QXT)
+ 
++find_package(Qxt REQUIRED COMPONENTS QxtCore, QxtGui)
++message(STATUS "Use system Qxt Library: " ${USE_SYSTEM_QXT})
++find_package ( QtSingleApplication REQUIRED)
++message(STATUS "Use system QtSA Library: " ${USE_SYSTEM_QTSA})
+ 
+ set (QLIPPER_HEADERS
+-    qtsingleapplication/qtsingleapplication.h
+-    qtsingleapplication/qtlocalpeer.h
++    #qtsingleapplication/qtsingleapplication.h
++    #qtsingleapplication/qtlocalpeer.h
+     qkeysequencewidget/qkeysequencewidget.h
+     qkeysequencewidget/qkeysequencewidget_p.h
+     qmenuview/qmenuview.h
+@@ -126,13 +133,13 @@
+     src/qlippernetwork.h
+ )
+ 
+-if (HAVE_QXT)
+-    set (QLIPPER_HEADERS ${QLIPPER_HEADERS}
+-            qxt/qxtglobalshortcut.h
+-        )
+-else (HAVE_QXT)
+-    add_definitions(-DNO_QXT)
+-endif (HAVE_QXT)
++#if (HAVE_QXT)
++#    set (QLIPPER_HEADERS ${QLIPPER_HEADERS}
++#            qxt/qxtglobalshortcut.h
++#        )
++#else (HAVE_QXT)
++#    add_definitions(-DNO_QXT)
++#endif (HAVE_QXT)
+ 
+ set (QLIPPER_FORMS
+     src/qlipperpreferencesdialog.ui
+@@ -158,12 +165,15 @@
+     ${CMAKE_CURRENT_BINARY_DIR}
+     ${CMAKE_CURRENT_BINARY_DIR}/src
+     ${CMAKE_CURRENT_SOURCE_DIR}/qkeysequencewidget
+-    ${CMAKE_CURRENT_SOURCE_DIR}/qxt
++    #${CMAKE_CURRENT_SOURCE_DIR}/qxt
++    ${QXT_QXTCORE_INCLUDE_DIR}
++    ${QXT_QXTGUI_INCLUDE_DIR}
+     ${CMAKE_CURRENT_SOURCE_DIR}/qmenuview
+-    ${CMAKE_CURRENT_SOURCE_DIR}/qtsingleapplication
++    #${CMAKE_CURRENT_SOURCE_DIR}/qtsingleapplication
++    ${QTSINGLEAPPLICATION_INCLUDE_DIR}
+ )
+ 
+-add_executable( ${EXE_NAME} WIN32 MACOSX_BUNDLE 
++add_executable( ${EXE_NAME} WIN32 MACOSX_BUNDLE
+     ${QLIPPER_SOURCES}
+     ${QLIPPER_UI}
+     ${QLIPPER_MOC}
+@@ -177,6 +187,14 @@
+     ${QT_QTMAIN_LIBRARY}
+ )
+ 
++if(USE_SYSTEM_QXT)
++	target_link_libraries( ${EXE_NAME} ${QXT_QXTCORE_LIB_RELEASE} ${QXT_QXTGUI_LIB_RELEASE})
++endif(USE_SYSTEM_QXT)
++
++if(USE_SYSTEM_QTSA)
++	target_link_libraries( ${EXE_NAME} ${QTSINGLEAPPLICATION_LIBRARY})
++endif(USE_SYSTEM_QTSA)
++
+ target_link_libraries( ${EXE_NAME}
+     ${QT_QTNETWORK_LIBRARY}
+ )
