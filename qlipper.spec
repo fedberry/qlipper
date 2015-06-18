@@ -1,6 +1,6 @@
 Name:		qlipper
 Version:	2.0.1
-Release:	6%{?dist}
+Release:	7%{?dist}
 License:	GPLv3+
 Summary:	Lightweight clipboard history
 URL:		http://code.google.com/p/qlipper
@@ -43,6 +43,9 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
 
 %changelog
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.1-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Sat May 02 2015 Kalev Lember <kalevlember@gmail.com> - 2.0.1-6
 - Rebuilt for GCC 5 C++11 ABI change
 
