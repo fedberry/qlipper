@@ -1,0 +1,35 @@
+--- CMakeLists.txt.orig	2015-10-08 16:25:32.192496424 +0300
++++ CMakeLists.txt	2015-10-08 17:09:08.648007485 +0300
+@@ -58,13 +58,13 @@
+ find_package(Qt4 REQUIRED QtCore QtGui QtNetwork)
+ include(${QT_USE_FILE})
+ 
+-find_package(Qxt)
++find_package(Qxt REQUIRED COMPONENTS QxtCore, QxtGui)
+ message(STATUS "Use system Qxt Library: " ${USE_SYSTEM_QXT})
+ if (USE_SYSTEM_QXT AND NOT QXT_FOUND)
+     message(FATAL_ERROR "System Qxt not found")
+ endif ()
+ 
+-find_package (QtSingleApplication)
++find_package (QtSingleApplication REQUIRED)
+ message(STATUS "Use system QtSA Library: " ${USE_SYSTEM_QTSA})
+ if (USE_SYSTEM_QTSA AND NOT QTSINGLEAPPLICATION_FOUND)
+     message(FATAL_ERROR "System QtSingleApplication not found")
+@@ -187,9 +187,16 @@
+ )
+ if (NOT QTSINGLEAPPLICATION_FOUND)
+     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtsingleapplication)
++else ()
++    include_directories(${QTSINGLEAPPLICATION_INCLUDE_DIR})
+ endif (NOT QTSINGLEAPPLICATION_FOUND)
+ if (NOT QXT_FOUND)
+     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qxt)
++else ()
++    include_directories(
++        ${QXT_INCLUDE_PATH}/QxtCore
++        ${QXT_INCLUDE_PATH}/QxtGui
++)
+ endif (NOT QXT_FOUND)
+ 
+ 

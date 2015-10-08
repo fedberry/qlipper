@@ -1,34 +1,35 @@
 Name:		qlipper
-Version:	2.0.1
-Release:	7%{?dist}
+Version:	2.0.2
+Release:	1%{?dist}
 License:	GPLv3+
 Summary:	Lightweight clipboard history
 URL:		http://code.google.com/p/qlipper
-Source0:	http://qlipper.googlecode.com/files/%{name}-%{version}.tar.bz2
-Source1:	FindQxt.cmake
-Source2:	FindQtSingleApplication.cmake
-Patch0:		%{name}-%{version}-qxt_qtsa.patch
+Source0:	http://qlipper.googlecode.com/files/%{name}-%{version}.tar.gz
+Patch0:		%{name}-2.0.2-qxt_qtsa.patch
 BuildRequires:	cmake, desktop-file-utils
 BuildRequires:	pkgconfig(QtGui), libqxt-devel, qtsingleapplication-devel
 
 %description
 Lightweight clipboard history applet.
 
+
 %prep
 %setup -q
-mkdir cmake
-cp %{SOURCE1} cmake
-cp %{SOURCE2} cmake
+#mkdir cmake
+#cp %{SOURCE1} cmake
+#cp %{SOURCE2} cmake
 %patch0 -p 0
 # be assured
 %{__rm} -rf qxt qtsingleapplication
 
+
 %build
 mkdir build
 pushd build
-%cmake -DCMAKE_BUILD_TYPE=release  -DUSE_SYSTEM_QXT=ON -DUSE_SYSTEM_QTSINGLEAPPLICATION=ON ..
+%cmake -DCMAKE_BUILD_TYPE=release ..
 make %{?_smp_mflags}
 popd
+
 
 %install
 pushd build
@@ -36,13 +37,18 @@ pushd build
 popd
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 
+
 %files
 %doc COPYING README
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
 
+
 %changelog
+* Thu Oct 08 2015 TI_Eugene <ti.eugene@gmail.com> - 2.0.2-1
+- Version bump.
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.1-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
