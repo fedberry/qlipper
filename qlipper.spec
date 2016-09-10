@@ -1,51 +1,60 @@
+%global     commit dae06f31025aace991c72f37295f05236b16ab3d
+%global     commit_short %(c=%{commit}; echo ${c:0:7})
+
 Name:		qlipper
-Version:	2.0.2
-Release:	2%{?dist}
+Version:	5.0.0
+Release:	0.%{commit_short}%{?dist}
 License:	GPLv3+
 Summary:	Lightweight clipboard history
-URL:		http://code.google.com/p/qlipper
-Source0:	http://qlipper.googlecode.com/files/%{name}-%{version}.tar.gz
-Patch0:		%{name}-2.0.2-qxt_qtsa.patch
-BuildRequires:	cmake, desktop-file-utils
-BuildRequires:	pkgconfig(QtGui), libqxt-devel, qtsingleapplication-devel
+URL:		https://github.com/pvanek/qlipper
+Source0:	https://github.com/pvanek/qlipper/archive/%{commit}.tar.gz#/%{name}-%{version}-%{commit_short}.tar.gz
+BuildRequires:	cmake
+BuildRequires:  desktop-file-utils
+BuildRequires:  ImageMagick
+BuildRequires:  pkgconfig(Qt5Gui)
+BuildRequires:  pkgconfig(Qt5Widgets)
+BuildRequires:  pkgconfig(Qt5Help)
+
 
 %description
 Lightweight clipboard history applet.
 
 
 %prep
-%setup -q
-#mkdir cmake
-#cp %{SOURCE1} cmake
-#cp %{SOURCE2} cmake
-%patch0 -p 0
-# be assured
-%{__rm} -rf qxt qtsingleapplication
-
+%setup -n %{name}-%{commit}
 
 %build
-mkdir build
-pushd build
-%cmake -DCMAKE_BUILD_TYPE=release ..
+%cmake .
 make %{?_smp_mflags}
-popd
 
 
 %install
-pushd build
 %{makeinstall} DESTDIR=%{buildroot}
-popd
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 
+install -d -D -m 755 %{buildroot}%{_datadir}/pixmaps
+install -d -D -m 755 %{buildroot}%{_iconsdir}
+
+install -D src/icons/%{name}.png %{buildroot}%{_iconsdir}
+convert %{buildroot}%{_iconsdir}/%{name}.png %{buildroot}%{_datadir}/pixmaps/%{name}.xpm
 
 %files
 %doc COPYING README
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
-%{_datadir}/pixmaps/%{name}.png
+%{_datadir}/pixmaps/%{name}.xpm
+%{_datadir}/%{name}/translations/*.qm
+%{_datadir}/icons/hicolor/*/*/%{name}.png
+
 
 
 %changelog
+* Sat Sep 10 2016 Vaughan <devel at agrez dot net> - 5.0.0-0.dae06f3
+- Drop patch0
+- New version
+- Update to git commit: dae06f31025aace991c72f37295f05236b16ab3d
+- Build against Qt5
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
