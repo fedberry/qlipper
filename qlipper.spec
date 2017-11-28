@@ -1,9 +1,9 @@
-%global     commit 4de89a63813d90ac8dd6bd8147c37ba0d49ffd48
+%global     commit 6753c3fdfd2c3273bb6551212819d7200400e570
 %global     commit_short %(c=%{commit}; echo ${c:0:7})
 
 Name:		qlipper
 Version:	5.0.0
-Release:	2.%{commit_short}%{?dist}
+Release:	6.%{commit_short}%{?dist}
 License:	GPLv3+
 Summary:	Lightweight clipboard history
 URL:		https://github.com/pvanek/qlipper
@@ -49,6 +49,10 @@ convert %{buildroot}%{_iconsdir}/%{name}.png %{buildroot}%{_datadir}/pixmaps/%{n
 
 
 %changelog
+* Tue Nov 28 2017 Vaughan <devel at agrez dot net> - 5.0.0-6.6753c3f
+- Update to git commit: 6753c3fdfd2c3273bb6551212819d7200400e570
+- Bump release
+
 * Tue Feb 14 2017 Vaughan <devel at agrez dot net> - 5.0.0-2.4de89a6
 - Update to git commit: 4de89a63813d90ac8dd6bd8147c37ba0d49ffd48
 
